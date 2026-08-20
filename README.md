@@ -1,6 +1,8 @@
 
 # Holmes
 
+![holmes screenshot](manual/screenshot.png)
+
 Holmes is an episodic adventure game developed by Remi Nolan, inspired by the classic Sherlock Holmes tales by Sir Arthur Conan Doyle.
 
 This repository only contains the public source code, not the actual assets.
