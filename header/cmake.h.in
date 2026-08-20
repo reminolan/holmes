@@ -1,0 +1,9 @@
+#ifndef CMAKE_H
+#define CMAKE_H
+
+#define BUILD_NAME "${BUILD_NAME}"
+#define BUILD_TYPE "${CMAKE_BUILD_TYPE}"
+#define BUILD_VERSION "${BUILD_VERSION}"
+#cmakedefine BUILD_INTERNAL
+
+#endif//CMAKE_H

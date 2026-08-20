@@ -6,6 +6,10 @@ build/*
 assets
 assets/*
 
+# ignore generated cmake.h
+header/cmake.h
+
+# ignore my temprorary file
 tmp
 
 # clangd cache

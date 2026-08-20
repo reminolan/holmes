@@ -43,6 +43,9 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 set(SOURCE_PATH ${PROJECT_SOURCE_DIR}/source)
 set(HEADER_PATH ${PROJECT_SOURCE_DIR}/header)
 
+configure_file(${HEADER_PATH}/cmake.h.in ${HEADER_PATH}/cmake.h
+               NEWLINE_STYLE UNIX)
+
 set(SOURCES
   ${SOURCE_PATH}/draw.c
 
