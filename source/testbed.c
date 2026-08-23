@@ -54,13 +54,15 @@ bool TickTestbed()
         .y2 = 96
       }
     },
+
     {
       .rect = {
-        .header.type = DRAW_COMMAND_RECT,
-        .header.red = 0.0f,
+        .header.type = DRAW_COMMAND_RECT_OUTLINE,
+        .header.red = 1.0f,
         .header.green = 0.0f,
-        .header.blue = 1.0f,
+        .header.blue = 0.0f,
         .header.alpha = 1.0f,
+        .header.depth = 128,
         .x = 32,
         .y = 128,
         .width = 64,
@@ -69,11 +71,12 @@ bool TickTestbed()
     },
     {
       .rect = {
-        .header.type = DRAW_COMMAND_RECT_OUTLINE,
-        .header.red = 1.0f,
+        .header.type = DRAW_COMMAND_RECT,
+        .header.red = 0.0f,
         .header.green = 0.0f,
-        .header.blue = 0.0f,
+        .header.blue = 1.0f,
         .header.alpha = 1.0f,
+        .header.depth = 32,
         .x = 32,
         .y = 128,
         .width = 64,
@@ -87,6 +90,7 @@ bool TickTestbed()
   }
 
   FinishDrawCommandQueue(test.queue);
+  SortDrawCommandQueue(test.queue);
 
   while (GetDrawCommandQueueStatus(test.queue) != DRAW_COMMAND_QUEUE_EMPTY) {
     DrawCommand command;

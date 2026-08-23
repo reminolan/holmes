@@ -172,6 +172,24 @@ void ExecuteDrawCommand(DrawCommand target)
 }
 
 /* --- @DrawCommandQueue ---------------------------------------------------- */
+/*
+ * NOTE:
+ *   The DrawCommandQueue is an opaque pointer to a data structure.
+ *   Right now it is just a simple array but this may change in the future.
+ *   Particularly I'm thinking of doing a list of buckets,
+ *   where each bucket discriminated by RenderTarget.
+ *   This is because it removes the need for a separate Sort function because
+ *   that sorting can happen at Push time instead.
+ *
+ *   The memory is allocated in bulk to contain both the structure and data.
+ *   This is done to ensure some amount of memory (and cache) coherency.
+ *   However it prevents the array from being truly dynamically sized,
+ *   unless the resulting pointer is changed to be a double-indirection.
+ *   However, I would rather avoid this as it requires me to maintain another list
+ *   of pointers in this file, obscuring the intended drawing system.
+ *
+ *     - Remi 2026.08.23
+ */
 typedef struct QueueData {
   DrawCommandQueueStatus status;
 
@@ -185,7 +203,7 @@ DrawCommandQueue* CreateDrawCommandQueue(Uint32 max_commands)
 {
   if (max_commands == 0) {
     SDL_SetError("CreateDrawCommandQueue: max_commands must be nonzero");
-    return nullptr;
+    return NULL;
   }
 
   const Uint32 ALLOCATION_SIZE = sizeof(QueueData) +
@@ -194,13 +212,11 @@ DrawCommandQueue* CreateDrawCommandQueue(Uint32 max_commands)
   QueueData* result = SDL_malloc(ALLOCATION_SIZE);
 
   if (result) {
-    *result = (QueueData){
-      .status = DRAW_COMMAND_QUEUE_EMPTY,
-      .length = max_commands,
-      .count = 0,
-      .index = 0,
-      .array = (DrawCommand*)((Uint8*)result + sizeof(QueueData)),
-    };
+    result->status = DRAW_COMMAND_QUEUE_EMPTY;
+    result->length = max_commands;
+    result->count = 0;
+    result->index = 0;
+    result->array = (DrawCommand*)((Uint8*)result + sizeof(QueueData));
   }
 
   return result;
@@ -211,6 +227,8 @@ void DeleteDrawCommandQueue(DrawCommandQueue* target)
   /*
    * Right now we don't have any child allocations of QueueData
    * Therefore we can just deallocate the DrawCommandQueue* (void*).
+   *
+   * This function is in place in case there are child allocs in the future.
    */
   if (target) {
     SDL_free(target);
@@ -289,6 +307,40 @@ void FinishDrawCommandQueue(DrawCommandQueue* target)
 
   if (queue) {
     queue->status = DRAW_COMMAND_QUEUE_FINISHED;
+  }
+}
+
+int CompareDrawCommand(DrawCommand a, DrawCommand b)
+{
+  /* compare the RenderTargets first */
+  int result = (int)((Sint64)a.header.target - (Sint64)b.header.target);
+
+  /* if the RenderTargets are equal, compare the depths */
+  if (result == 0) {
+    result = (int)(a.header.depth - b.header.depth);
+  }
+
+  /* normalize the result to -1, 0, or 1 */
+  return (result >= 0) - (result <= 0);
+}
+
+static int CompareDrawCommandCallback(const void* a, const void* b)
+{
+  DrawCommand command_a = *(DrawCommand*)a;
+  DrawCommand command_b = *(DrawCommand*)b;
+
+  return CompareDrawCommand(command_a, command_b);
+}
+
+void SortDrawCommandQueue(DrawCommandQueue* target)
+{
+  QueueData* queue = (QueueData*)target;
+
+  if (queue) {
+    SDL_qsort(queue->array,
+              queue->count,
+              sizeof(DrawCommand),
+              CompareDrawCommandCallback);
   }
 }
 

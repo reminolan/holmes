@@ -135,6 +135,10 @@ bool PopDrawCommandFromQueue(DrawCommandQueue* target, DrawCommand* out);
 
 void FinishDrawCommandQueue(DrawCommandQueue* target);
 
+int CompareDrawCommand(DrawCommand a, DrawCommand b);
+
+void SortDrawCommandQueue(DrawCommandQueue* target);
+
 DrawCommandQueueStatus GetDrawCommandQueueStatus(DrawCommandQueue* target);
 
 #endif//DRAW_H
