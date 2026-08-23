@@ -15,7 +15,7 @@ Holmes only depends on SDL3.
 There are two ways to include the dependencies:
 
 1. Compiled alongside the source code via git submodules (run `git submodules update --init --recursive`)
-2. Install via system-wide package manager (e.g. `pacman -ySu SDL3-devel)
+2. Install via system-wide package manager (e.g. `pacman -ySu SDL3-devel`)
 
 The CMake build script will first look for the dependencies under `<repo-root>/vendor/` where the git submodules will place them.
 If it fails to find the dependencies there, it will attempt to use `find_package` to pull them from the system.
