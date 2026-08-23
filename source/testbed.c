@@ -21,6 +21,13 @@ void QuitTestbed()
 
 bool TickTestbed()
 {
+  static float direction = 1.0f;
+  static float temp = 0.0f;
+  temp += 0.1f * direction;
+  if (temp > 32.0f || temp < 0) {
+    direction *= -1;
+  }
+
   /*
    * NOTE:
    *  Drawing graphics this way defeats the point of this setup.
@@ -50,7 +57,7 @@ bool TickTestbed()
         .header.alpha = 1.0f,
         .x1 = 64,
         .y1 = 64,
-        .x2 = 128,
+        .x2 = 128 + temp,
         .y2 = 96
       }
     },
