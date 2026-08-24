@@ -355,3 +355,28 @@ DrawCommandQueueStatus GetDrawCommandQueueStatus(DrawCommandQueue* target)
   }
 }
 
+/*
+ * NOTE:
+ *  I'm debating with myself whether or not this should be implemented directly
+ *  or using the functions (as written).
+ *
+ *  An optimizing compiler would probably inline all of this.
+ *  However, I don't want to rely too heavily on the optimizer.
+ *  Largely because it's a program and therefore can't reason about the code.
+ *
+ *  I don't know.
+ *  It's at least worth further research.
+ *
+ *    - Remi 2026.08.23
+ */
+void ExecuteDrawCommandQueue(DrawCommandQueue* target)
+{
+  while (GetDrawCommandQueueStatus(test.queue) != DRAW_COMMAND_QUEUE_EMPTY) {
+    DrawCommand command;
+
+    if (PopDrawCommandFromQueue(test.queue, &command)) {
+      ExecuteDrawCommand(command);
+    }
+  }
+}
+
