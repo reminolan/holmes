@@ -371,10 +371,9 @@ DrawCommandQueueStatus GetDrawCommandQueueStatus(DrawCommandQueue* target)
  */
 void ExecuteDrawCommandQueue(DrawCommandQueue* target)
 {
-  while (GetDrawCommandQueueStatus(test.queue) != DRAW_COMMAND_QUEUE_EMPTY) {
-    DrawCommand command;
-
-    if (PopDrawCommandFromQueue(test.queue, &command)) {
+  DrawCommand command;
+  while (GetDrawCommandQueueStatus(target) != DRAW_COMMAND_QUEUE_EMPTY) {
+    if (PopDrawCommandFromQueue(target, &command)) {
       ExecuteDrawCommand(command);
     }
   }
