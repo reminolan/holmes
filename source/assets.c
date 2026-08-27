@@ -39,26 +39,26 @@ static SDL_IOStream* IOFromStorage(char* name,
     return NULL;
   }
 
-  bool success = SDL_IOFromMem(buffer, (size_t)length);
+  SDL_IOStream* result = SDL_IOFromMem(buffer, (size_t)length);
 
-  if (success) {
-    if (out_buffer) {
-      *out_buffer = buffer;
-    }
-
-    if (out_length) {
-      *out_length = length;
-    }
-  } else {
+  if (!result) {
     SDL_free(buffer);
   }
 
-  return success;
+  if (out_buffer) {
+    *out_buffer = buffer;
+  }
+
+  if (out_length) {
+    *out_length = length;
+  }
+
+  return result;
 }
 
 SDL_Surface* LoadSurfaceFromAssets(const char* name)
 {
-  SDL_Surface* result = NULL;$
+  SDL_Surface* result = NULL;
 
   char* filename = NULL;
   SDL_asprintf(&filename, "sprites/%s.bmp", name);
@@ -70,7 +70,7 @@ SDL_Surface* LoadSurfaceFromAssets(const char* name)
   void* buffer;
   size_t length;
 
-  SDL_IOStream* source_stream = IOFromStorage(name, &buffer, &length);
+  SDL_IOStream* source_stream = IOFromStorage(filename, &buffer, &length);
 
   if (source_stream) {
     result = SDL_LoadBMP_IO(source_stream, true);

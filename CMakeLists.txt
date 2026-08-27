@@ -65,7 +65,7 @@ set(HEADERS
 add_executable(holmes WIN32 ${SOURCES} ${HEADERS})
 
 target_include_directories(holmes PRIVATE ${HEADER_PATH})
-target_link_libraries(holmes PRIVATE SDL3::SDL3 physfs)
+target_link_libraries(holmes PRIVATE SDL3::SDL3)
 
 # -- Warnings as Errors & SSE4.1 -----------------------------------------------
 if(MSVC)
