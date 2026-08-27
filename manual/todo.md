@@ -1,5 +1,7 @@
 
 - Assets
+  - Loading from SDL_Storage
+    - PhysicsFS support?
   - Sprites
   - Scripts
   - Stage
@@ -21,7 +23,7 @@
   - Draw Command Queue
     - Pooling Draw Commands DONE!
     - Sort DONE!
-    - Execute
+    - Execute DONE!
   - Camera
     - Scrolling
     - View Culling
