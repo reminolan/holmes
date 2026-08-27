@@ -1,5 +1,5 @@
 # -- CMakeSetup ----------------------------------------------------------------
-cmake_minimum_required(VERSION 4.3.3)
+cmake_minimum_required(VERSION 4.3.0)
 
 # -- ProjectSetup --------------------------------------------------------------
 project(holmes)
@@ -52,16 +52,20 @@ set(SOURCES
   ${SOURCE_PATH}/testbed.h
   ${SOURCE_PATH}/testbed.c
 
+  ${SOURCE_PATH}/assets.c
   ${SOURCE_PATH}/main.c)
 
 set(HEADERS
+  ${HEADER_PATH}/cmake.h
+
   ${HEADER_PATH}/draw.h
+  ${HEADER_PATH}/assets.h
   ${HEADER_PATH}/holmes.h)
 
 add_executable(holmes WIN32 ${SOURCES} ${HEADERS})
 
 target_include_directories(holmes PRIVATE ${HEADER_PATH})
-target_link_libraries(holmes PRIVATE SDL3::SDL3)
+target_link_libraries(holmes PRIVATE SDL3::SDL3 physfs)
 
 # -- Warnings as Errors & SSE4.1 -----------------------------------------------
 if(MSVC)
