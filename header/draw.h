@@ -46,13 +46,7 @@ typedef enum DrawCommandType: Uint32 {
   DRAW_COMMAND_LINE,
   DRAW_COMMAND_RECT,
   DRAW_COMMAND_RECT_OUTLINE,
-
-  /* Drawing Sprites */
-  /*
-   * TODO: implement these once sprites are available
-   * DRAW_COMMAND_SPRITE,
-   * DRAW_COMMAND_SPRITE_REGION,
-   */
+  DRAW_COMMAND_SPRITE,
 } DrawCommandType;
 
 typedef struct DrawCommandHeader {
@@ -95,14 +89,16 @@ typedef struct DrawRectCommand {
   Uint32 height;
 } DrawRectCommand;
 
-typedef struct DrawTargetCommand {
+typedef struct DrawSpriteCommand {
   DrawCommandHeader header;
 
-  //TODO: We shouldn't pass the texture directly.
-  //      Instead it should be an abstracted RenderTarget.
-  //        - Remi 2026-08-19
-  SDL_Texture* target;
-} DrawTargetCommand;
+  Uint32 x;
+  Uint32 y;
+
+  SDL_Texture* texture;
+
+  const SDL_FRect* region;
+} DrawSpriteCommand;
 
 typedef union DrawCommand {
   DrawCommandType type;
@@ -111,6 +107,7 @@ typedef union DrawCommand {
   DrawPixelCommand pixel;
   DrawLineCommand line;
   DrawRectCommand rect;
+  DrawSpriteCommand sprite;
 } DrawCommand;
 
 void ExecuteDrawCommand(DrawCommand target);

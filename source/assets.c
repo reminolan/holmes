@@ -6,9 +6,18 @@ static struct {
 
 bool InitAssetsSystem(const char* first_command_line_argument)
 {
+#ifdef BUILD_INTERNAL
+  assets.storage = SDL_OpenTitleStorage(SDL_GetCurrentDirectory(), 0);
+#else
   assets.storage = SDL_OpenTitleStorage(NULL, 0);
+#endif//BUILD_INTERNAL
+
   if (!assets.storage) {
     return false;
+  }
+
+  while (!SDL_StorageReady(assets.storage)) {
+    SDL_Delay(1);
   }
 
   return true;
@@ -35,12 +44,13 @@ static SDL_IOStream* IOFromStorage(char* name,
 
   buffer = SDL_malloc(length);
   if (!buffer) {
-    SDL_SetError("out of memory!!!!");
+    SetErrorString("out of memory!!!!");
     return NULL;
   }
 
-  SDL_IOStream* result = SDL_IOFromMem(buffer, (size_t)length);
+  SDL_ReadStorageFile(assets.storage, name, buffer, length);
 
+  SDL_IOStream* result = SDL_IOFromMem(buffer, (size_t)length);
   if (!result) {
     SDL_free(buffer);
   }
@@ -61,7 +71,7 @@ SDL_Surface* LoadSurfaceFromAssets(const char* name)
   SDL_Surface* result = NULL;
 
   char* filename = NULL;
-  SDL_asprintf(&filename, "sprites/%s.bmp", name);
+  SDL_asprintf(&filename, "assets/sprites/%s.bmp", name);
 
   if (!filename) {
     return NULL;

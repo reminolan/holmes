@@ -19,11 +19,16 @@ SDL_AppResult SDL_AppInit(void** app_state,
    *    Remi 2026.08.20
    */
   DrawConfig draw_config = {
-    .flags = DRAW_FLAGS_VSYNC,
+    .flags = DRAW_FLAGS_VSYNC | DRAW_FLAGS_INTEGER_SCALE,
     .window_scale = 2,
   };
   if (!InitDrawSystem(draw_config)) {
     SDL_Log("Draw init failed! Error: %s", SDL_GetError());
+    return SDL_APP_FAILURE;
+  }
+
+  if (!InitAssetsSystem(arguments_array[0])) {
+    SDL_Log("Assets init failed! Error: %s", SDL_GetError());
     return SDL_APP_FAILURE;
   }
 

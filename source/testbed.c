@@ -2,6 +2,7 @@
 
 static struct {
   DrawCommandQueue* queue;
+  SDL_Texture* sprite;
 } test;
 
 bool InitTestbed()
@@ -11,11 +12,19 @@ bool InitTestbed()
     return false;
   }
 
+  SDL_Surface* sprite_surface = LoadSurfaceFromAssets("test");
+  if (!sprite_surface) {
+    return false;
+  }
+
+  test.sprite = SDL_CreateTextureFromSurface(GetDrawBackend(), sprite_surface);
+
   return true;
 }
 
 void QuitTestbed()
 {
+  SDL_DestroyTexture(test.sprite);
   DeleteDrawCommandQueue(test.queue);
 }
 
@@ -44,6 +53,7 @@ bool TickTestbed()
         .header.green = 0.0f,
         .header.blue = 0.0f,
         .header.alpha = 1.0f,
+        .header.depth = 16,
         .x = 32,
         .y = 32
       }
@@ -55,6 +65,7 @@ bool TickTestbed()
         .header.green = 1.0f,
         .header.blue = 0.0f,
         .header.alpha = 1.0f,
+        .header.depth = 16,
         .x1 = 64,
         .y1 = 64,
         .x2 = 128 + temp,
@@ -88,6 +99,16 @@ bool TickTestbed()
         .y = 128,
         .width = 64,
         .height = 32,
+      }
+
+    },
+    {
+      .sprite = {
+        .header.type = DRAW_COMMAND_SPRITE,
+        .header.depth = 0,
+        .x = 0,
+        .y = 0,
+        .texture = test.sprite,
       }
     }
   };

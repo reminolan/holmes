@@ -59,6 +59,7 @@ set(HEADERS
   ${HEADER_PATH}/cmake.h
 
   ${HEADER_PATH}/draw.h
+  ${HEADER_PATH}/error.h
   ${HEADER_PATH}/assets.h
   ${HEADER_PATH}/holmes.h)
 

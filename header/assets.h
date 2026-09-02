@@ -3,10 +3,10 @@
 
 #include <SDL3/SDL.h>
 
-bool InitAssetsSystem();
+bool InitAssetsSystem(const char* first_command_line_argument);
 
 void QuitAssetsSystem();
 
-SDL_Surface* LoadSurface(const char* name);
+SDL_Surface* LoadSurfaceFromAssets(const char* name);
 
 #endif//ASSETS_H

@@ -51,6 +51,8 @@ bool InitDrawSystem(DrawConfig config)
     return false;
   }
 
+  SDL_SetDefaultTextureScaleMode(draw.backend, SDL_SCALEMODE_PIXELART);
+
   if (draw.config.flags & DRAW_FLAGS_VSYNC) {
     /*
      * NOTE:
@@ -136,19 +138,20 @@ void ExecuteDrawCommand(DrawCommand target)
                               target.header.alpha);
 
   switch(target.type) {
+    default:
+      break;
     case DRAW_COMMAND_NONE:
-      /* Do nothing. Maybe error? */
       break;
 
-    case DRAW_COMMAND_PIXEL:
+    case DRAW_COMMAND_PIXEL: {
       SDL_RenderPoint(draw.backend, target.pixel.x, target.pixel.y);
-      break;
+    } break;
 
-    case DRAW_COMMAND_LINE:
+    case DRAW_COMMAND_LINE: {
       SDL_RenderLine(draw.backend,
                      target.line.x1, target.line.y1,
                      target.line.x2, target.line.y2);
-      break;
+    } break;
 
     case DRAW_COMMAND_RECT: {
       SDL_FRect rect = {
@@ -159,7 +162,7 @@ void ExecuteDrawCommand(DrawCommand target)
       };
       SDL_RenderFillRect(draw.backend, (const SDL_FRect*)&rect);
     } break;
-    case DRAW_COMMAND_RECT_OUTLINE:
+    case DRAW_COMMAND_RECT_OUTLINE: {
       SDL_FRect rect = {
         .x = target.rect.x,
         .y = target.rect.y,
@@ -167,7 +170,28 @@ void ExecuteDrawCommand(DrawCommand target)
         .h = target.rect.height
       };
       SDL_RenderRect(draw.backend, (const SDL_FRect*)&rect);
-      break;
+    } break;
+
+    case DRAW_COMMAND_SPRITE: {
+      SDL_FRect destination_rect = {
+        .x = target.sprite.x,
+        .y = target.sprite.y,
+      };
+      
+      if (target.sprite.region) {
+        destination_rect.w = target.sprite.region->w;
+        destination_rect.h = target.sprite.region->h;
+      } else {
+        SDL_GetTextureSize(target.sprite.texture,
+                           &destination_rect.w,
+                           &destination_rect.h);
+      }
+
+      SDL_RenderTexture(draw.backend,
+                        target.sprite.texture,
+                        target.sprite.region,
+                        (const SDL_FRect*)&destination_rect);
+    } break;
   }
 }
 
@@ -185,10 +209,13 @@ void ExecuteDrawCommand(DrawCommand target)
  *   This is done to ensure some amount of memory (and cache) coherency.
  *   However it prevents the array from being truly dynamically sized,
  *   unless the resulting pointer is changed to be a double-indirection.
- *   However, I would rather avoid this as it requires me to maintain another list
+ *   However, I would rather avoid this as it requires me to maintain two lists
  *   of pointers in this file, obscuring the intended drawing system.
  *
  *     - Remi 2026.08.23
+ *
+ *   Maybe if I implement a separate (very simple) HashMap?
+ * - Remi 2026.09.01
  */
 typedef struct QueueData {
   DrawCommandQueueStatus status;
@@ -202,14 +229,14 @@ typedef struct QueueData {
 DrawCommandQueue* CreateDrawCommandQueue(Uint32 max_commands)
 {
   if (max_commands == 0) {
-    SDL_SetError("CreateDrawCommandQueue: max_commands must be nonzero");
+    SetErrorString("max_commands must be nonzero");
     return NULL;
   }
 
-  const Uint32 ALLOCATION_SIZE = sizeof(QueueData) +
-                                 (max_commands * sizeof(DrawCommand));
+  const Uint32 ARRAY_SIZE = (max_commands * sizeof(DrawCommand));
+  const Uint32 ALLOCATION_SIZE = sizeof(QueueData) + ARRAY_SIZE;
 
-  QueueData* result = SDL_malloc(ALLOCATION_SIZE);
+  QueueData* result = (QueueData*)SDL_malloc(ALLOCATION_SIZE);
 
   if (result) {
     result->status = DRAW_COMMAND_QUEUE_EMPTY;
@@ -238,7 +265,7 @@ void DeleteDrawCommandQueue(DrawCommandQueue* target)
 bool PushDrawCommandToQueue(DrawCommandQueue* target, DrawCommand command)
 {
   if (!target) {
-    SDL_SetError("PushCommandToQueue: target was NULL");
+    SetErrorString("target was NULL");
     return false;
   }
 
@@ -247,7 +274,7 @@ bool PushDrawCommandToQueue(DrawCommandQueue* target, DrawCommand command)
   if (queue->status == DRAW_COMMAND_QUEUE_EMPTY) {
     queue->status = DRAW_COMMAND_QUEUE_WRITING;
   } else if (queue->status == DRAW_COMMAND_QUEUE_FINISHED) {
-    SDL_SetError("PushCommandToQueue: attempt to write to finished queue");
+    SetErrorString("attempt to write to finished queue");
     return false;
   }
 
@@ -264,18 +291,18 @@ bool PushDrawCommandToQueue(DrawCommandQueue* target, DrawCommand command)
 bool PopDrawCommandFromQueue(DrawCommandQueue* target, DrawCommand* out)
 {
   if (!target) {
-    SDL_SetError("PopCommandFromQueue: target was NULL");
+    SetErrorString("target was NULL");
     return false;
   }
   if (!out) {
-    SDL_SetError("PopCommandFromQueue: out was NULL");
+    SetErrorString("out was NULL");
     return false;
   }
 
   QueueData* queue = (QueueData*)target;
 
   if (queue->status != DRAW_COMMAND_QUEUE_FINISHED) {
-    SDL_SetError("PopCommandFromQueue: DrawCommandQueue is not finished");
+    SetErrorString("PopCommandFromQueue: DrawCommandQueue is not finished");
     return false;
   }
 
