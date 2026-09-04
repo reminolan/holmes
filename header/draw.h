@@ -61,7 +61,7 @@ SDL_Renderer* GetDrawBackend();
 void ToggleFullscreen();
 
 /* --- @DrawCommand --------------------------------------------------------- */
-enum DrawCommandType: Uint32 {
+enum DrawCommandType: Uint8 {
   DRAW_COMMAND_NONE,
 
   /* Drawing Primitives */
@@ -150,6 +150,17 @@ DrawCommandQueue* CreateDrawCommandQueue(Uint32 max_commands);
 void DeleteDrawCommandQueue(DrawCommandQueue* target);
 
 bool PushDrawCommandToQueue(DrawCommandQueue* target, DrawCommand command);
+
+bool PushPixelCommandToQueue(DrawCommandQueue* target, DrawPixelCommand pixel);
+
+bool PushLineCommandToQueue(DrawCommandQueue* target, DrawLineCommand command);
+
+bool PushRectCommandToQueue(DrawCommandQueue* target,
+                            DrawRectCommand rect,
+                            bool filled = true);
+
+bool PushSpriteCommandToQueue(DrawCommandQueue* target,
+                              DrawSpriteCommand sprite);
 
 bool PopDrawCommandFromQueue(DrawCommandQueue* target, DrawCommand* out);
 

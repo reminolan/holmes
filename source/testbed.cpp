@@ -68,102 +68,92 @@ bool TickTestbed()
    *  By flipping between two queues you can draw and tick simultaneously.
    *    Remi 2026.08.20
    */
-  PushDrawCommandToQueue(test.queue, {
-    .pixel = {
-      .header = {
-        .type = DRAW_COMMAND_PIXEL,
+  PushPixelCommandToQueue(test.queue, {
+    .header = {
+      .type = DRAW_COMMAND_PIXEL,
 
-        .depth = 16,
+      .depth = 16,
 
-        .target = NULL,
+      .target = NULL,
 
-        .red = 1.0f,
-        .green = 0.0f,
-        .blue = 0.0f,
-        .alpha = 1.0f,
-      },
-      .x = 32,
-      .y = 32
-    }
+      .red = 1.0f,
+      .green = 0.0f,
+      .blue = 0.0f,
+      .alpha = 1.0f,
+    },
+    .x = 32,
+    .y = 32
   });
-  PushDrawCommandToQueue(test.queue, {
-    .line = {
-      .header = {
-        .type = DRAW_COMMAND_LINE,
+  PushLineCommandToQueue(test.queue, {
+    .header = {
+      .type = DRAW_COMMAND_LINE,
 
-        .depth = 16,
+      .depth = 16,
 
-        .target = NULL,
+      .target = NULL,
 
-        .red = 0.0f,
-        .green = 1.0f,
-        .blue = 0.0f,
-        .alpha = 1.0f,
-      },
-      .x1 = 64,
-      .y1 = 64,
-      .x2 = 128,
-      .y2 = 96
-    }
+      .red = 0.0f,
+      .green = 1.0f,
+      .blue = 0.0f,
+      .alpha = 1.0f,
+    },
+    .x1 = 64,
+    .y1 = 64,
+    .x2 = 128,
+    .y2 = 96
   });
-  PushDrawCommandToQueue(test.queue, {
-    .rect = {
-      .header = {
-        .type = DRAW_COMMAND_RECT_OUTLINE,
+  PushRectCommandToQueue(test.queue, {
+    .header = {
+      .type = DRAW_COMMAND_RECT_OUTLINE,
 
-        .depth = 128,
+      .depth = 128,
 
-        .target = NULL,
+      .target = NULL,
 
-        .red = 1.0f,
-        .green = 0.0f,
-        .blue = 0.0f,
-        .alpha = 1.0f,
-      },
-      .x = 32,
-      .y = 128,
-      .width = 64,
-      .height = 32,
-    }
+      .red = 1.0f,
+      .green = 0.0f,
+      .blue = 0.0f,
+      .alpha = 1.0f,
+    },
+    .x = 32,
+    .y = 128,
+    .width = 64,
+    .height = 32,
+  }, false);
+  PushRectCommandToQueue(test.queue, {
+    .header = {
+      .type = DRAW_COMMAND_RECT,
+
+      .depth = 32,
+
+      .target = NULL,
+
+      .red = 0.0f,
+      .green = 0.0f,
+      .blue = 1.0f,
+      .alpha = 1.0f,
+    },
+    .x = 32,
+    .y = 128,
+    .width = 64,
+    .height = 32,
   });
-  PushDrawCommandToQueue(test.queue, {
-    .rect = {
-      .header = {
-        .type = DRAW_COMMAND_RECT,
+  PushSpriteCommandToQueue(test.queue, {
+    .header = {
+      .type = DRAW_COMMAND_SPRITE,
 
-        .depth = 32,
+      .depth = 0,
 
-        .target = NULL,
+      .target = NULL,
 
-        .red = 0.0f,
-        .green = 0.0f,
-        .blue = 1.0f,
-        .alpha = 1.0f,
-      },
-      .x = 32,
-      .y = 128,
-      .width = 64,
-      .height = 32,
-    }
-  });
-  PushDrawCommandToQueue(test.queue, {
-    .sprite = {
-      .header = {
-        .type = DRAW_COMMAND_SPRITE,
-
-        .depth = 0,
-
-        .target = NULL,
-
-        .red = 0.0f,
-        .green = 0.0f,
-        .blue = 0.0f,
-        .alpha = 0.0f,
-      },
-      .x = 0,
-      .y = 0,
-      .texture = test.sprite,
-    }
+      .red = 0.0f,
+      .green = 0.0f,
+      .blue = 0.0f,
+      .alpha = 0.0f,
+    },
+    .x = 0,
+    .y = 0,
+    .texture = test.sprite,
   });
 
   FinishDrawCommandQueue(test.queue);

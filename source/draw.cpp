@@ -51,8 +51,9 @@ bool InitDrawSystem(DrawConfig config)
   }
 
   draw.config = config;
-  draw.config.window_scale = (config.window_scale) ? config.window_scale : 1;
-  draw.config.backend_name = config.backend_name;
+  if (config.window_scale == 0) {
+    draw.config.window_scale = 1;
+  }
 
   SDL_WindowFlags flags = GetSDLWindowFlags(draw.config.flags);
   draw.window = SDL_CreateWindow("Project Holmes",
@@ -304,6 +305,45 @@ bool PushDrawCommandToQueue(DrawCommandQueue* target, DrawCommand command)
     queue->count++;
   }
   return true;
+}
+
+bool PushPixelCommandToQueue(DrawCommandQueue* target, DrawPixelCommand pixel)
+{
+  DrawCommand command;
+  command.pixel = pixel;
+  command.type = DRAW_COMMAND_PIXEL;
+
+  return PushDrawCommandToQueue(target, command);
+}
+
+bool PushLineCommandToQueue(DrawCommandQueue* target, DrawLineCommand line)
+{
+  DrawCommand command;
+  command.line = line;
+  command.type = DRAW_COMMAND_LINE;
+
+  return PushDrawCommandToQueue(target, command);
+}
+
+bool PushRectCommandToQueue(DrawCommandQueue* target,
+                            DrawRectCommand rect,
+                            bool filled)
+{
+  DrawCommand command;
+  command.rect = rect;
+  command.type = filled ? DRAW_COMMAND_RECT : DRAW_COMMAND_RECT_OUTLINE;
+
+  return PushDrawCommandToQueue(target, command);
+}
+
+bool PushSpriteCommandToQueue(DrawCommandQueue* target,
+                              DrawSpriteCommand sprite)
+{
+  DrawCommand command;
+  command.sprite = sprite;
+  command.type = DRAW_COMMAND_SPRITE;
+
+  return PushDrawCommandToQueue(target, command);
 }
 
 bool PopDrawCommandFromQueue(DrawCommandQueue* target, DrawCommand* out)

@@ -26,6 +26,7 @@
 
 #include <SDL3/SDL.h>
 
+#include "log.h"
 #include "cmake.h"
 #include "error.h"
 #include "assets.h"

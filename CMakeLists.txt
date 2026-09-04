@@ -52,12 +52,14 @@ set(SOURCES
   ${SOURCE_PATH}/testbed.h
   ${SOURCE_PATH}/testbed.cpp
 
+  ${SOURCE_PATH}/log.cpp
   ${SOURCE_PATH}/assets.cpp
   ${SOURCE_PATH}/main.cpp)
 
 set(HEADERS
   ${HEADER_PATH}/cmake.h
 
+  ${HEADER_PATH}/log.h
   ${HEADER_PATH}/draw.h
   ${HEADER_PATH}/error.h
   ${HEADER_PATH}/assets.h
