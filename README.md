@@ -9,7 +9,7 @@ This repository only contains the public source code, not the actual assets.
 
 ## Building
 
-Holmes is built using CMake, Ninja, and a modern C compiler like GCC or Clang (not MSVC).
+Holmes is built using CMake, Ninja, and a C++ compiler.
 
 Holmes only depends on SDL3.
 There are two ways to include the dependencies:
