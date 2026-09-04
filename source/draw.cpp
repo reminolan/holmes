@@ -31,7 +31,7 @@ static struct {
   SDL_Renderer* backend;
 } draw;
 
-static SDL_WindowFlags GetSDLWindowFlags(DrawFlags flags)
+static SDL_WindowFlags GetSDLWindowFlags(int flags)
 {
   SDL_WindowFlags result = 0;
 
@@ -50,16 +50,11 @@ bool InitDrawSystem(DrawConfig config)
     return false;
   }
 
-  draw.config = (DrawConfig){
-    .flags = config.flags,
-
-    .window_scale = (config.window_scale) ? config.window_scale : 1,
-
-    .backend_name = config.backend_name,
-  };
+  draw.config = config;
+  draw.config.window_scale = (config.window_scale) ? config.window_scale : 1;
+  draw.config.backend_name = config.backend_name;
 
   SDL_WindowFlags flags = GetSDLWindowFlags(draw.config.flags);
-
   draw.window = SDL_CreateWindow("Project Holmes",
                                  DRAW_WIDTH * draw.config.window_scale,
                                  DRAW_HEIGHT * draw.config.window_scale,
@@ -178,27 +173,27 @@ void ExecuteDrawCommand(DrawCommand target)
 
     case DRAW_COMMAND_RECT: {
       SDL_FRect rect = {
-        .x = target.rect.x,
-        .y = target.rect.y,
-        .w = target.rect.width,
-        .h = target.rect.height
+        .x = (float)target.rect.x,
+        .y = (float)target.rect.y,
+        .w = (float)target.rect.width,
+        .h = (float)target.rect.height
       };
       SDL_RenderFillRect(draw.backend, (const SDL_FRect*)&rect);
     } break;
     case DRAW_COMMAND_RECT_OUTLINE: {
       SDL_FRect rect = {
-        .x = target.rect.x,
-        .y = target.rect.y,
-        .w = target.rect.width,
-        .h = target.rect.height
+        .x = (float)target.rect.x,
+        .y = (float)target.rect.y,
+        .w = (float)target.rect.width,
+        .h = (float)target.rect.height
       };
       SDL_RenderRect(draw.backend, (const SDL_FRect*)&rect);
     } break;
 
     case DRAW_COMMAND_SPRITE: {
       SDL_FRect destination_rect = {
-        .x = target.sprite.x,
-        .y = target.sprite.y,
+        .x = (float)target.sprite.x,
+        .y = (float)target.sprite.y,
       };
       
       if (target.sprite.region) {
@@ -330,14 +325,10 @@ bool PopDrawCommandFromQueue(DrawCommandQueue* target, DrawCommand* out)
   }
 
   if (queue->count == 0) {
-    *out = (DrawCommand){
-      .type = DRAW_COMMAND_NONE
-    };
+    out->type = DRAW_COMMAND_NONE;
     queue->status = DRAW_COMMAND_QUEUE_EMPTY;
   } else {
-    SDL_memcpy(out,
-               &queue->array[queue->index],
-               sizeof(DrawCommand));
+    SDL_memcpy(out, &queue->array[queue->index], sizeof(DrawCommand));
 
     queue->index++;
 

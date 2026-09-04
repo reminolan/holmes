@@ -53,10 +53,10 @@ void QuitTestbed()
 
 bool TickTestbed()
 {
-  static float direction = 1.0f;
-  static float temp = 0.0f;
-  temp += 0.1f * direction;
-  if (temp > 32.0f || temp < 0) {
+  static Sint32 direction = 1.0f;
+  static Sint32 temp = 0.0f;
+  temp += 1 * direction;
+  if (temp > 32 || temp < 0) {
     direction *= -1;
   }
 
@@ -68,79 +68,106 @@ bool TickTestbed()
    *  By flipping between two queues you can draw and tick simultaneously.
    *    Remi 2026.08.20
    */
-  DrawCommand commands[] = {
-    {
-      .pixel = {
-        .header.type = DRAW_COMMAND_PIXEL,
-        .header.red = 1.0f,
-        .header.green = 0.0f,
-        .header.blue = 0.0f,
-        .header.alpha = 1.0f,
-        .header.depth = 16,
-        .x = 32,
-        .y = 32
-      }
-    },
-    {
-      .line = {
-        .header.type = DRAW_COMMAND_LINE,
-        .header.red = 0.0f,
-        .header.green = 1.0f,
-        .header.blue = 0.0f,
-        .header.alpha = 1.0f,
-        .header.depth = 16,
-        .x1 = 64,
-        .y1 = 64,
-        .x2 = 128 + temp,
-        .y2 = 96
-      }
-    },
+  PushDrawCommandToQueue(test.queue, {
+    .pixel = {
+      .header = {
+        .type = DRAW_COMMAND_PIXEL,
 
-    {
-      .rect = {
-        .header.type = DRAW_COMMAND_RECT_OUTLINE,
-        .header.red = 1.0f,
-        .header.green = 0.0f,
-        .header.blue = 0.0f,
-        .header.alpha = 1.0f,
-        .header.depth = 128,
-        .x = 32,
-        .y = 128,
-        .width = 64,
-        .height = 32,
-      }
-    },
-    {
-      .rect = {
-        .header.type = DRAW_COMMAND_RECT,
-        .header.red = 0.0f,
-        .header.green = 0.0f,
-        .header.blue = 1.0f,
-        .header.alpha = 1.0f,
-        .header.depth = 32,
-        .x = 32,
-        .y = 128,
-        .width = 64,
-        .height = 32,
-      }
+        .depth = 16,
 
-    },
-    {
-      .sprite = {
-        .header.type = DRAW_COMMAND_SPRITE,
-        .header.depth = 0,
-        .x = 0,
-        .y = 0,
-        .texture = test.sprite,
-      }
+        .target = NULL,
+
+        .red = 1.0f,
+        .green = 0.0f,
+        .blue = 0.0f,
+        .alpha = 1.0f,
+      },
+      .x = 32,
+      .y = 32
     }
-  };
+  });
+  PushDrawCommandToQueue(test.queue, {
+    .line = {
+      .header = {
+        .type = DRAW_COMMAND_LINE,
 
-  for (int index = 0; index < SDL_arraysize(commands); ++index) {
-    PushDrawCommandToQueue(test.queue, commands[index]);
-  }
+        .depth = 16,
+
+        .target = NULL,
+
+        .red = 0.0f,
+        .green = 1.0f,
+        .blue = 0.0f,
+        .alpha = 1.0f,
+      },
+      .x1 = 64,
+      .y1 = 64,
+      .x2 = 128,
+      .y2 = 96
+    }
+  });
+  PushDrawCommandToQueue(test.queue, {
+    .rect = {
+      .header = {
+        .type = DRAW_COMMAND_RECT_OUTLINE,
+
+        .depth = 128,
+
+        .target = NULL,
+
+        .red = 1.0f,
+        .green = 0.0f,
+        .blue = 0.0f,
+        .alpha = 1.0f,
+      },
+      .x = 32,
+      .y = 128,
+      .width = 64,
+      .height = 32,
+    }
+  });
+  PushDrawCommandToQueue(test.queue, {
+    .rect = {
+      .header = {
+        .type = DRAW_COMMAND_RECT,
+
+        .depth = 32,
+
+        .target = NULL,
+
+        .red = 0.0f,
+        .green = 0.0f,
+        .blue = 1.0f,
+        .alpha = 1.0f,
+      },
+      .x = 32,
+      .y = 128,
+      .width = 64,
+      .height = 32,
+    }
+  });
+  PushDrawCommandToQueue(test.queue, {
+    .sprite = {
+      .header = {
+        .type = DRAW_COMMAND_SPRITE,
+
+        .depth = 0,
+
+        .target = NULL,
+
+        .red = 0.0f,
+        .green = 0.0f,
+        .blue = 0.0f,
+        .alpha = 0.0f,
+      },
+      .x = 0,
+      .y = 0,
+      .texture = test.sprite,
+    }
+  });
 
   FinishDrawCommandQueue(test.queue);
+
   SortDrawCommandQueue(test.queue);
 
   while (GetDrawCommandQueueStatus(test.queue) != DRAW_COMMAND_QUEUE_EMPTY) {
