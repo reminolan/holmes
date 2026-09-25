@@ -18,8 +18,8 @@ else()
    set(BUILD_VERISON "invalid version")
 endif()
 
-if((${CMAKE_BUILD_TYPE} STREQUAL "Debug") OR
-   (${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebugInfo"))
+if(("${CMAKE_BUILD_TYPE}" STREQUAL "Debug") OR
+   ("${CMAKE_BUILD_TYPE}" STREQUAL "RelWithDebugInfo"))
   set(BUILD_INTERNAL ON)
 else()
   set(BUILD_INTERNAL OFF)
