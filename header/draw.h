@@ -30,7 +30,7 @@
 #define DRAW_WIDTH (640)
 #define DRAW_HEIGHT (360)
 
-enum DrawFlags {
+typedef enum DrawFlags: Uint8 {
   DRAW_FLAGS_FULLSCREEN_SHIFT,
   DRAW_FLAGS_VSYNC_SHIFT,
   DRAW_FLAGS_INTEGER_SCALE_SHIFT,
@@ -38,15 +38,15 @@ enum DrawFlags {
   DRAW_FLAGS_FULLSCREEN    = 1 << DRAW_FLAGS_FULLSCREEN_SHIFT,
   DRAW_FLAGS_VSYNC         = 1 << DRAW_FLAGS_VSYNC_SHIFT,
   DRAW_FLAGS_INTEGER_SCALE = 1 << DRAW_FLAGS_INTEGER_SCALE_SHIFT,
-};
+} DrawFlags;
 
-struct DrawConfig {
+typedef struct DrawConfig {
   int flags;
 
   Uint16 window_scale;
 
   char* backend_name;
-};
+} DrawConfig;
 
 bool InitDrawSystem(DrawConfig config);
 
@@ -61,7 +61,7 @@ SDL_Renderer* GetDrawBackend();
 void ToggleFullscreen();
 
 /* --- @DrawCommand --------------------------------------------------------- */
-enum DrawCommandType: Uint8 {
+typedef enum DrawCommandType: Uint8 {
   DRAW_COMMAND_NONE,
 
   /* Drawing Primitives */
@@ -70,9 +70,9 @@ enum DrawCommandType: Uint8 {
   DRAW_COMMAND_RECT,
   DRAW_COMMAND_RECT_OUTLINE,
   DRAW_COMMAND_SPRITE,
-};
+} DrawCommandType;
 
-struct DrawCommandHeader {
+typedef struct DrawCommandHeader {
   DrawCommandType type;
 
   Uint32 depth;
@@ -83,16 +83,16 @@ struct DrawCommandHeader {
   float green;
   float blue;
   float alpha;
-};
+} DrawCommandHeader;
 
-struct DrawPixelCommand {
+typedef struct DrawPixelCommand {
   DrawCommandHeader header;
 
   Uint32 x;
   Uint32 y;
-};
+} DrawPixelCommand;
 
-struct DrawLineCommand {
+typedef struct DrawLineCommand {
   DrawCommandHeader header;
 
   Uint32 x1;
@@ -100,9 +100,9 @@ struct DrawLineCommand {
 
   Uint32 x2;
   Uint32 y2;
-};
+} DrawLineCommand;
 
-struct DrawRectCommand {
+typedef struct DrawRectCommand {
   DrawCommandHeader header;
 
   Uint32 x;
@@ -110,9 +110,9 @@ struct DrawRectCommand {
 
   Uint32 width;
   Uint32 height;
-};
+} DrawRectCommand;
 
-struct DrawSpriteCommand {
+typedef struct DrawSpriteCommand {
   DrawCommandHeader header;
 
   Uint32 x;
@@ -121,9 +121,9 @@ struct DrawSpriteCommand {
   SDL_Texture* texture;
 
   const SDL_FRect* region;
-};
+} DrawSpriteCommand;
 
-union DrawCommand {
+typedef union DrawCommand {
   DrawCommandType type;
   DrawCommandHeader header;
 
@@ -131,17 +131,17 @@ union DrawCommand {
   DrawLineCommand line;
   DrawRectCommand rect;
   DrawSpriteCommand sprite;
-};
+} DrawCommand;
 
 void ExecuteDrawCommand(DrawCommand target);
 
 /* --- @DrawCommandQueue ---------------------------------------------------- */
-enum DrawCommandQueueStatus: Uint8 {
+typedef enum DrawCommandQueueStatus: Uint8 {
   DRAW_COMMAND_QUEUE_INVALID,
   DRAW_COMMAND_QUEUE_EMPTY,
   DRAW_COMMAND_QUEUE_WRITING,
   DRAW_COMMAND_QUEUE_FINISHED,
-};
+} DrawCommandQueueStatus;
 
 typedef void DrawCommandQueue;
 
@@ -155,9 +155,10 @@ bool PushPixelCommandToQueue(DrawCommandQueue* target, DrawPixelCommand pixel);
 
 bool PushLineCommandToQueue(DrawCommandQueue* target, DrawLineCommand command);
 
-bool PushRectCommandToQueue(DrawCommandQueue* target,
-                            DrawRectCommand rect,
-                            bool filled = true);
+bool PushRectCommandToQueue(DrawCommandQueue* target, DrawRectCommand rect);
+
+bool PushRectOutlineCommandToQueue(DrawCommandQueue* target,
+                                   DrawRectCommand rect);
 
 bool PushSpriteCommandToQueue(DrawCommandQueue* target,
                               DrawSpriteCommand sprite);

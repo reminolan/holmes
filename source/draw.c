@@ -325,13 +325,21 @@ bool PushLineCommandToQueue(DrawCommandQueue* target, DrawLineCommand line)
   return PushDrawCommandToQueue(target, command);
 }
 
-bool PushRectCommandToQueue(DrawCommandQueue* target,
-                            DrawRectCommand rect,
-                            bool filled)
+bool PushRectCommandToQueue(DrawCommandQueue* target, DrawRectCommand rect)
 {
   DrawCommand command;
   command.rect = rect;
-  command.type = filled ? DRAW_COMMAND_RECT : DRAW_COMMAND_RECT_OUTLINE;
+  command.type = DRAW_COMMAND_RECT;
+
+  return PushDrawCommandToQueue(target, command);
+}
+
+bool PushRectOutlineCommandToQueue(DrawCommandQueue* target,
+                                   DrawRectCommand rect)
+{
+  DrawCommand command;
+  command.rect = rect;
+  command.type = DRAW_COMMAND_RECT_OUTLINE;
 
   return PushDrawCommandToQueue(target, command);
 }

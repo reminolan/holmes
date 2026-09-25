@@ -68,13 +68,9 @@ bool TickTestbed()
    *  By flipping between two queues you can draw and tick simultaneously.
    *    Remi 2026.08.20
    */
-  PushPixelCommandToQueue(test.queue, {
+  PushPixelCommandToQueue(test.queue, (DrawPixelCommand){
     .header = {
-      .type = DRAW_COMMAND_PIXEL,
-
       .depth = 16,
-
-      .target = NULL,
 
       .red = 1.0f,
       .green = 0.0f,
@@ -84,13 +80,9 @@ bool TickTestbed()
     .x = 32,
     .y = 32
   });
-  PushLineCommandToQueue(test.queue, {
+  PushLineCommandToQueue(test.queue, (DrawLineCommand){
     .header = {
-      .type = DRAW_COMMAND_LINE,
-
       .depth = 16,
-
-      .target = NULL,
 
       .red = 0.0f,
       .green = 1.0f,
@@ -102,13 +94,9 @@ bool TickTestbed()
     .x2 = 128,
     .y2 = 96
   });
-  PushRectCommandToQueue(test.queue, {
+  PushRectCommandToQueue(test.queue, (DrawRectCommand){
     .header = {
-      .type = DRAW_COMMAND_RECT_OUTLINE,
-
       .depth = 128,
-
-      .target = NULL,
 
       .red = 1.0f,
       .green = 0.0f,
@@ -119,29 +107,23 @@ bool TickTestbed()
     .y = 128,
     .width = 64,
     .height = 32,
-  }, false);
-  PushRectCommandToQueue(test.queue, {
-    .header = {
-      .type = DRAW_COMMAND_RECT,
+  });
+  PushRectOutlineCommandToQueue(test.queue, (DrawRectCommand){
+    .header.depth = 32,
 
-      .depth = 32,
+    .header.red = 0.0f,
+    .header.green = 0.0f,
+    .header.blue = 1.0f,
+    .header.alpha = 1.0f,
 
-      .target = NULL,
-
-      .red = 0.0f,
-      .green = 0.0f,
-      .blue = 1.0f,
-      .alpha = 1.0f,
-    },
     .x = 32,
     .y = 128,
+
     .width = 64,
     .height = 32,
   });
-  PushSpriteCommandToQueue(test.queue, {
+  PushSpriteCommandToQueue(test.queue, (DrawSpriteCommand){
     .header = {
-      .type = DRAW_COMMAND_SPRITE,
-
       .depth = 0,
 
       .target = NULL,

@@ -25,10 +25,10 @@ else()
   set(BUILD_INTERNAL OFF)
 endif()
 
-# -- C++ Options ---------------------------------------------------------------
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
+# -- C Options -----------------------------------------------------------------
+set(CMAKE_C_STANDARD 23)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CMAKE_C_EXTENSIONS OFF)
 
 # -- Libraries -----------------------------------------------------------------
 set(VENDOR_PATH ${PROJECT_SOURCE_DIR}/vendor)
@@ -47,14 +47,14 @@ configure_file(${HEADER_PATH}/cmake.h.in ${HEADER_PATH}/cmake.h
                NEWLINE_STYLE UNIX)
 
 set(SOURCES
-  ${SOURCE_PATH}/draw.cpp
+  ${SOURCE_PATH}/draw.c
 
   ${SOURCE_PATH}/testbed.h
-  ${SOURCE_PATH}/testbed.cpp
+  ${SOURCE_PATH}/testbed.c
 
-  ${SOURCE_PATH}/log.cpp
-  ${SOURCE_PATH}/assets.cpp
-  ${SOURCE_PATH}/main.cpp)
+  ${SOURCE_PATH}/log.c
+  ${SOURCE_PATH}/assets.c
+  ${SOURCE_PATH}/main.c)
 
 set(HEADERS
   ${HEADER_PATH}/cmake.h
